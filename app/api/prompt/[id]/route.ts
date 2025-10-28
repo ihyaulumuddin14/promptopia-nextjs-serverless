@@ -27,11 +27,12 @@ export async function GET ( request: Request, { params }: { params: Promise<{ id
 }
 
 // PATCH (update)
-export async function PATCH (request: Request, { params }: { params: { id: string } }) {
+export async function PATCH (request: Request, { params }: { params: Promise<{ id: string }> }) {
    const { prompt, tag } = await request.json();
 
    try {
-      const promptUpdated = await PromptModel.findByIdAndUpdate(params.id, {
+      const id = (await params).id;
+      const promptUpdated = await PromptModel.findByIdAndUpdate(id, {
          prompt,
          tag
       })
@@ -54,9 +55,10 @@ export async function PATCH (request: Request, { params }: { params: { id: strin
 }
 
 // DELETE (delete)
-export async function DELETE (request: Request, { params }: { params: { id: string } }) {
+export async function DELETE (request: Request, { params }: { params:Promise<{ id: string }> }) {
    try {
-      const promptDeleted = await PromptModel.findByIdAndDelete(params.id);
+      const id = (await params).id
+      const promptDeleted = await PromptModel.findByIdAndDelete(id);
    
       if (!promptDeleted) return new Response(JSON.stringify({
          message: "Prompt not found",
